@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Tracing } from "trace_events";
+import { useState } from "react";
 
 interface ContainerProps {
   bgColor: string;
@@ -22,6 +23,10 @@ interface CircleProps {
 }
 
 function Circle({ bgColor, borderColor, text = "default text" }: CircleProps) {
+  const [value, setValue] = useState<number | string>(0);
+  setValue(2);
+  setValue("aaa");
+  // setValue(true); // error
   return (
     <Container bgColor={bgColor} borderColor={borderColor ?? bgColor}>
       {text}
