@@ -17,12 +17,8 @@ interface IData {
 }
 
 function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IData[]>(
-    ["ohlcv", coinId],
-    () => fetchCoinHistory(coinId),
-    {
-      refetchInterval: 10_000,
-    }
+  const { isLoading, data } = useQuery<IData[]>(["ohlcv", coinId], () =>
+    fetchCoinHistory(coinId)
   );
   return (
     <div>
@@ -30,11 +26,17 @@ function Chart({ coinId }: ChartProps) {
         "Loading chart..."
       ) : (
         <ApexChart
-          type="line"
+          type="candlestick"
           series={[
             {
               name: "Price",
-              data: data?.map((price) => price.close) ?? [],
+              data:
+                data?.map((price) => {
+                  return {
+                    x: price.time_close,
+                    y: [price.open, price.high, price.low, price.close],
+                  };
+                }) ?? [],
             },
           ]}
           options={{
@@ -46,10 +48,6 @@ function Chart({ coinId }: ChartProps) {
               background: "transparent",
             },
             grid: { show: false },
-            stroke: {
-              curve: "smooth",
-              width: 3,
-            },
             xaxis: {
               axisBorder: {
                 show: false,
@@ -68,11 +66,6 @@ function Chart({ coinId }: ChartProps) {
                 show: false,
               },
             },
-            fill: {
-              type: "gradient",
-              gradient: { gradientToColors: ["#0be881"], stops: [0, 100] },
-            },
-            colors: ["#0fbcf9"],
             tooltip: { y: { formatter: (value) => `$${value.toFixed(3)}` } },
           }}
         />
