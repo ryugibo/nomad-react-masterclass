@@ -11,6 +11,7 @@
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "apexcharts": "^3.35.0",
+    "gh-pages": "^3.2.3",
     "react": "^18.0.0",
     "react-apexcharts": "^1.4.0",
     "react-dom": "^18.0.0",
@@ -26,7 +27,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build -e crypto",
+    "predeploy": "npm run build"
   },
   "eslintConfig": {
     "extends": [
@@ -50,5 +53,6 @@
     "@types/react-helmet": "^6.1.5",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.24"
-  }
+  },
+  "homepage": "https://ryugibo.github.io/nomad-react-masterclass/crypto"
 }
