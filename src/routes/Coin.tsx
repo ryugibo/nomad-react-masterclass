@@ -20,8 +20,8 @@ const Container = styled.div`
 `;
 const Header = styled.header`
   height: 10vh;
-  display: flect;
-  justify-content: center;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 `;
 const Title = styled.h1`
@@ -162,9 +162,11 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
+        <Link to={{ pathname: "/" }}>&larr;</Link>
         <Title>
           {state?.name ? state.name : loading ? "Loading.." : infoData?.name}
         </Title>
+        <Link to={{ pathname: "/" }}></Link>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
