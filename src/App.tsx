@@ -85,7 +85,7 @@ function App() {
           {theme === "default" ? "라이트 모드" : "다크모드"}
         </ToggleTheme>
         <Router />
-        <ReactQueryDevtools initialIsOpen={true}></ReactQueryDevtools>
+        <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
       </ThemeProvider>
     </>
   );
