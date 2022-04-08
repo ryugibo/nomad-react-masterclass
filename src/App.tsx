@@ -1,6 +1,10 @@
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { ThemeProvider } from "styled-components";
+import { defaultTheme, lightTheme } from "./theme";
+import { useState } from "react";
+import styled from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fontgoogleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -65,12 +69,24 @@ a {
 }
 `;
 
+const ToggleTheme = styled.button``;
+
 function App() {
+  const [theme, setTheme] = useState("default");
   return (
     <>
-      <GlobalStyle />
-      <Router />
-      <ReactQueryDevtools initialIsOpen={true}></ReactQueryDevtools>
+      <ThemeProvider theme={theme === "default" ? defaultTheme : lightTheme}>
+        <GlobalStyle />
+        <ToggleTheme
+          onClick={() =>
+            setTheme((prev) => (prev === "default" ? "light" : "default"))
+          }
+        >
+          {theme === "default" ? "라이트 모드" : "다크모드"}
+        </ToggleTheme>
+        <Router />
+        <ReactQueryDevtools initialIsOpen={true}></ReactQueryDevtools>
+      </ThemeProvider>
     </>
   );
 }
