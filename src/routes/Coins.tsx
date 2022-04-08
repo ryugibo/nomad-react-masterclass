@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery } from "react-query";
@@ -69,9 +68,7 @@ function Coins() {
   return (
     <Container>
       <Helmet>
-        <title>
-          {state?.name ? state.name : loading ? "Loading.." : infoData?.name}
-        </title>
+        <title>코인</title>
       </Helmet>
       <Header>
         <Title>코인</Title>
