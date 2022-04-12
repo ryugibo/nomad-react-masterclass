@@ -12,6 +12,8 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { Helmet } from "react-helmet";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -20,13 +22,15 @@ const Container = styled.div`
 `;
 const Header = styled.header`
   height: 10vh;
-  display: flex;
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
   justify-content: space-between;
   align-items: center;
 `;
 const Title = styled.h1`
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
+  text-align: center;
 `;
 const Loader = styled.span`
   text-align: center;
@@ -154,6 +158,8 @@ function Coin() {
     }
   );
   const loading = infoLoading || tickersLoading;
+  const setIsDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleIsDarkAtom = () => setIsDarkAtom((prev) => !prev);
   return (
     <Container>
       <Helmet>
@@ -166,7 +172,7 @@ function Coin() {
         <Title>
           {state?.name ? state.name : loading ? "Loading.." : infoData?.name}
         </Title>
-        <span></span>
+        <button onClick={toggleIsDarkAtom}>Toggle Mode</button>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>

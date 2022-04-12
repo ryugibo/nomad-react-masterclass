@@ -14,7 +14,8 @@ const Container = styled.div`
 
 const Header = styled.header`
   height: 10vh;
-  display: flect;
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
   justify-content: center;
   align-items: center;
 `;
@@ -42,6 +43,7 @@ const Coin = styled.li`
 const Title = styled.h1`
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
+  text-align: center;
 `;
 
 const Loader = styled.span`
@@ -75,6 +77,7 @@ function Coins() {
         <title>코인</title>
       </Helmet>
       <Header>
+        <span></span>
         <Title>코인</Title>
         <button onClick={toggleIsDarkAtom}>Toggle Mode</button>
       </Header>
