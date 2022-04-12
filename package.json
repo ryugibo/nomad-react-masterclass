@@ -29,7 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build -e crypto -t",
+    "deploy": "gh-pages -d build -e todo -t",
     "predeploy": "npm run build",
     "gh-clean": "gh-pages-clean"
   },
@@ -56,5 +56,5 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.24"
   },
-  "homepage": "https://ryugibo.github.io/nomad-react-masterclass/crypto"
+  "homepage": "https://ryugibo.github.io/nomad-react-masterclass/todo"
 }
