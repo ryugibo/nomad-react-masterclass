@@ -2,7 +2,7 @@ import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { ThemeProvider } from "styled-components";
-import { defaultTheme, lightTheme } from "./theme";
+import { darkTheme, lightTheme } from "./theme";
 import { useState } from "react";
 import styled from "styled-components";
 
@@ -72,18 +72,13 @@ a {
 const ToggleTheme = styled.button``;
 
 function App() {
-  const [theme, setTheme] = useState("default");
+  const [isDark, setIsDark] = useState(false);
+  const toggleDark = () => setIsDark((prev) => !prev);
   return (
     <>
-      <ThemeProvider theme={theme === "default" ? defaultTheme : lightTheme}>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
-        <ToggleTheme
-          onClick={() =>
-            setTheme((prev) => (prev === "default" ? "light" : "default"))
-          }
-        >
-          {theme === "default" ? "라이트 모드" : "다크모드"}
-        </ToggleTheme>
+        <ToggleTheme onClick={toggleDark}>toggle Mode</ToggleTheme>
         <Router />
         <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
       </ThemeProvider>
