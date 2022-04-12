@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/nomad-react-masterclass/crypto/static/js/main.fab25210.js",
+    "index.html": "/nomad-react-masterclass/crypto/index.html",
+    "main.fab25210.js.map": "/nomad-react-masterclass/crypto/static/js/main.fab25210.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.fab25210.js"
+  ]
+}
