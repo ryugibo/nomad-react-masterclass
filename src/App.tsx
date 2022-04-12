@@ -69,8 +69,6 @@ a {
 }
 `;
 
-const ToggleTheme = styled.button``;
-
 function App() {
   const [isDark, setIsDark] = useState(false);
   const toggleDark = () => setIsDark((prev) => !prev);
@@ -78,8 +76,7 @@ function App() {
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
-        <ToggleTheme onClick={toggleDark}>toggle Mode</ToggleTheme>
-        <Router />
+        <Router toggleDark={toggleDark} isDark={isDark} />
         <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
       </ThemeProvider>
     </>
