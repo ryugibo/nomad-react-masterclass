@@ -1,5 +1,7 @@
 import { atom, selector } from "recoil";
 
+export const TODO_LOCALSTORAGE_KEY = "TODO";
+
 export enum Categories {
   "TO_DO" = "TO_DO",
   "DOING" = "DOING",

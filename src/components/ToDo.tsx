@@ -1,22 +1,24 @@
 import React from "react";
-import { Categories, IToDo, toDoState } from "../atoms";
-import { useSetRecoilState } from "recoil";
+import { Categories, IToDo, toDoState, TODO_LOCALSTORAGE_KEY } from "../atoms";
+import { useRecoilState } from "recoil";
 
 function ToDo({ text, category, id }: IToDo) {
-  const setToDos = useSetRecoilState(toDoState);
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { name },
     } = event;
 
     setToDos((oldToDos) => {
-      return oldToDos.map((oldToDo) => {
+      const newToDos = oldToDos.map((oldToDo) => {
         if (oldToDo.id !== id) {
           return oldToDo;
         } else {
           return { id, text, category: name } as IToDo;
         }
       });
+      localStorage.setItem(TODO_LOCALSTORAGE_KEY, JSON.stringify(newToDos));
+      return newToDos;
     });
   };
   return (
