@@ -9,6 +9,15 @@ function ToDo({ text, category, id }: IToDo) {
       currentTarget: { name },
     } = event;
 
+    setToDos((oldToDos) => {
+      return oldToDos.map((oldToDo) => {
+        if (oldToDo.id !== id) {
+          return oldToDo;
+        } else {
+          return { id, text, category: name } as IToDo;
+        }
+      });
+    });
     console.log(name);
   };
   return (
