@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/nomad-react-masterclass/todo/static/js/main.21acb4b8.js",
+    "index.html": "/nomad-react-masterclass/todo/index.html",
+    "main.21acb4b8.js.map": "/nomad-react-masterclass/todo/static/js/main.21acb4b8.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.21acb4b8.js"
+  ]
+}
