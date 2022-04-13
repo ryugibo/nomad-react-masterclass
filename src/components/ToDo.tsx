@@ -1,8 +1,14 @@
 import React from "react";
-import { Categories, IToDo, toDoState, TODO_LOCALSTORAGE_KEY } from "../atoms";
-import { useRecoilState } from "recoil";
+import {
+  categoryTypeState,
+  IToDo,
+  toDoState,
+  TODO_LOCALSTORAGE_KEY,
+} from "../atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 function ToDo({ text, category, id }: IToDo) {
+  const categoryTypes = useRecoilValue(categoryTypeState);
   const [toDos, setToDos] = useRecoilState(toDoState);
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
@@ -14,7 +20,7 @@ function ToDo({ text, category, id }: IToDo) {
         if (oldToDo.id !== id) {
           return oldToDo;
         } else {
-          return { id, text, category: name } as IToDo;
+          return { id, text, category: { name } } as IToDo;
         }
       });
       localStorage.setItem(TODO_LOCALSTORAGE_KEY, JSON.stringify(newToDos));
@@ -33,20 +39,14 @@ function ToDo({ text, category, id }: IToDo) {
   return (
     <li>
       <span>{text}</span>
-      {category !== Categories.DOING && (
-        <button name={Categories.DOING} onClick={onClick}>
-          Doing
-        </button>
-      )}
-      {category !== Categories.TO_DO && (
-        <button name={Categories.TO_DO} onClick={onClick}>
-          To Do
-        </button>
-      )}
-      {category !== Categories.DONE && (
-        <button name={Categories.DONE} onClick={onClick}>
-          Done
-        </button>
+
+      {categoryTypes.map(
+        (categoryType, index) =>
+          categoryType.name !== category.name && (
+            <button key={index} name={categoryType.name} onClick={onClick}>
+              {categoryType.name}
+            </button>
+          )
       )}
       <button onClick={onClickDelete}>Delete</button>
     </li>
