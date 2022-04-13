@@ -21,6 +21,15 @@ function ToDo({ text, category, id }: IToDo) {
       return newToDos;
     });
   };
+  const onClickDelete = () => {
+    setToDos((oldToDos) => {
+      const newToDos = oldToDos.filter((oldToDo) => {
+        return oldToDo.id !== id;
+      });
+      localStorage.setItem(TODO_LOCALSTORAGE_KEY, JSON.stringify(newToDos));
+      return newToDos;
+    });
+  };
   return (
     <li>
       <span>{text}</span>
@@ -39,6 +48,7 @@ function ToDo({ text, category, id }: IToDo) {
           Done
         </button>
       )}
+      <button onClick={onClickDelete}>Delete</button>
     </li>
   );
 }
