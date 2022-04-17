@@ -26,6 +26,9 @@ const Box = styled(motion.div)`
   border-radius: 40px;
   height: 200px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Overlay = styled(motion.div)`
@@ -37,13 +40,23 @@ const Overlay = styled(motion.div)`
   align-items: center;
 `;
 
+const Circle = styled(motion.div)`
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background-color: #00a5ff;
+`;
+
 function App() {
   const [id, setId] = useState<string | null>(null);
+  const [circleOwnerId, setCircleOwnerId] = useState("2");
   return (
     <Wrapper>
       <Grid>
         {["1", "2", "3", "4"].map((n) => (
-          <Box onClick={() => setId(n)} key={n} layoutId={n} />
+          <Box onClick={() => setId(n)} key={n} layoutId={n}>
+            {circleOwnerId === n ? <Circle layoutId="circle" /> : null}
+          </Box>
         ))}
       </Grid>
       <AnimatePresence>
@@ -58,6 +71,11 @@ function App() {
           </Overlay>
         ) : null}
       </AnimatePresence>
+      <button
+        onClick={() => setCircleOwnerId((prev) => (prev === "2" ? "3" : "2"))}
+      >
+        Toggle
+      </button>
     </Wrapper>
   );
 }
