@@ -125,14 +125,14 @@ function Header() {
     }
     setSearchOpen((prev: boolean) => !prev);
   };
-  const onChangeScrollY = () => {
-    if (scrollY.get() > 80) {
-      navAnimation.start("top");
-    } else {
-      navAnimation.start("scroll");
-    }
-  };
   useEffect(() => {
+    const onChangeScrollY = () => {
+      if (scrollY.get() > 80) {
+        navAnimation.start("top");
+      } else {
+        navAnimation.start("scroll");
+      }
+    };
     scrollY.onChange(onChangeScrollY);
     onChangeScrollY();
   }, [scrollY, navAnimation]);
