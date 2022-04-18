@@ -120,14 +120,16 @@ function Header() {
     }
     setSearchOpen((prev: boolean) => !prev);
   };
+  const onChangeScrollY = () => {
+    if (scrollY.get() > 80) {
+      navAnimation.start("top");
+    } else {
+      navAnimation.start("scroll");
+    }
+  };
   useEffect(() => {
-    scrollY.onChange(() => {
-      if (scrollY.get() > 80) {
-        navAnimation.start("top");
-      } else {
-        navAnimation.start("scroll");
-      }
-    });
+    scrollY.onChange(onChangeScrollY);
+    onChangeScrollY();
   }, [scrollY, navAnimation]);
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
