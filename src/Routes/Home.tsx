@@ -1,9 +1,20 @@
-import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useTransform,
+  useViewportScroll,
+} from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
-import { getMovies, IGetMoviesResult } from "../api";
+import {
+  getMovies,
+  getTopRatedMovies,
+  getUpcomingMovies,
+  IGetMoviesResult,
+  IMovie,
+} from "../api";
 import { makeImagePath } from "../utils";
 
 const Wrapper = styled.div`
@@ -42,9 +53,9 @@ const Overview = styled.p`
   width: 50vw;
 `;
 
-const Slider = styled.div`
+const Slider = styled.div<{ top: string }>`
   position: relative;
-  top: -100px;
+  top: ${(props) => props.top};
 `;
 
 const Row = styled(motion.div)`
@@ -56,6 +67,7 @@ const Row = styled(motion.div)`
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
+  position: relative;
   background-color: white;
   height: 200px;
   font-size: 26px;
@@ -91,6 +103,7 @@ const Overlay = styled(motion.div)`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
+  z-index: 1;
 `;
 
 const BigMovie = styled(motion.div)`
@@ -103,6 +116,7 @@ const BigMovie = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 15px;
   overflow: hidden;
+  z-index: 2;
 `;
 
 const BigCover = styled.div`
@@ -154,10 +168,16 @@ function Home() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { scrollY } = useViewportScroll();
+  const setScrollY = useTransform(scrollY, (value) => value + 50);
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
+  const { data: dataTopRated, isLoading: isLoadingTopRated } =
+    useQuery<IGetMoviesResult>(["movies", "topRated"], getTopRatedMovies);
+  const { data: dataUpcoming, isLoading: isLoadingUpcoming } =
+    useQuery<IGetMoviesResult>(["movied", "upcoming"], getUpcomingMovies);
+  console.log(dataTopRated);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const increaseIndex = () => {
@@ -176,11 +196,14 @@ function Home() {
   const onClickedOverlay = () => {
     history.push(`/`);
   };
+  const findMovie = (movie: IMovie) => {
+    return movie.id + "" === bigMovieMatch?.params.movieId;
+  };
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
-    data?.results.find(
-      (movie) => movie.id + "" === bigMovieMatch.params.movieId
-    );
+    (data?.results.find(findMovie) ||
+      dataTopRated?.results.find(findMovie) ||
+      dataUpcoming?.results.find(findMovie));
   console.log(clickedMovie);
   return (
     <Wrapper>
@@ -195,7 +218,8 @@ function Home() {
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
-          <Slider>
+          <Slider top="-100px">
+            <Title>Latest movies</Title>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
                 variants={rowVariants}
@@ -238,7 +262,7 @@ function Home() {
                   animate={{ opacity: 1 }}
                 />
                 <BigMovie
-                  style={{ top: scrollY.get() + 100 }}
+                  style={{ top: setScrollY }}
                   layoutId={bigMovieMatch.params.movieId}
                 >
                   {clickedMovie && (
@@ -259,6 +283,84 @@ function Home() {
             )}
           </AnimatePresence>
         </>
+      )}
+      {isLoadingTopRated ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <Slider top="200px">
+          <Title>Top Rated Movies</Title>
+          <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <Row
+              variants={rowVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ type: "tween", duration: 1 }}
+              key={index}
+            >
+              {dataTopRated?.results
+                .slice(1)
+                .slice(offset * index, offset * index + offset)
+                .map((movie) => (
+                  <Box
+                    key={movie.id}
+                    variants={boxVariants}
+                    initial="normal"
+                    whileHover="hover"
+                    transition={{ type: "tween" }}
+                    bgphoto={makeImagePath(movie.backdrop_path, "w500")}
+                    onClick={() => {
+                      onClickedBox(movie.id);
+                    }}
+                    layoutId={movie.id + ""}
+                  >
+                    <Info variants={infoVariants}>
+                      <h4>{movie.title}</h4>
+                    </Info>
+                  </Box>
+                ))}
+            </Row>
+          </AnimatePresence>
+        </Slider>
+      )}
+      {isLoadingUpcoming ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <Slider top="500px">
+          <Title>Upcoming Movies</Title>
+          <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <Row
+              variants={rowVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ type: "tween", duration: 1 }}
+              key={index}
+            >
+              {dataUpcoming?.results
+                .slice(1)
+                .slice(offset * index, offset * index + offset)
+                .map((movie) => (
+                  <Box
+                    key={movie.id}
+                    variants={boxVariants}
+                    initial="normal"
+                    whileHover="hover"
+                    transition={{ type: "tween" }}
+                    bgphoto={makeImagePath(movie.backdrop_path, "w500")}
+                    onClick={() => {
+                      onClickedBox(movie.id);
+                    }}
+                    layoutId={movie.id + ""}
+                  >
+                    <Info variants={infoVariants}>
+                      <h4>{movie.title}</h4>
+                    </Info>
+                  </Box>
+                ))}
+            </Row>
+          </AnimatePresence>
+        </Slider>
       )}
     </Wrapper>
   );

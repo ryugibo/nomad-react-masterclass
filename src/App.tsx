@@ -9,7 +9,7 @@ function App() {
     <Router hashType="noslash">
       <Header />
       <Switch>
-        <Route path="/tv">
+        <Route path={["/tv", "/tv/:tvId"]}>
           <Tv />
         </Route>
         <Route path="/search">
