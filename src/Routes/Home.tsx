@@ -17,7 +17,7 @@ const Loader = styled.div`
   align-items: center;
 `;
 
-const Banner = styled.div<{ bgPhoto: string }>`
+const Banner = styled.div<{ bgphoto: string }>`
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,7 @@ const Banner = styled.div<{ bgPhoto: string }>`
       rgba(0, 0, 0, 0),
       rgba(0, 0, 0, 1)
     ),
-    url(${(props) => props.bgPhoto});
+    url(${(props) => props.bgphoto});
   background-size: cover;
 `;
 
@@ -55,11 +55,11 @@ const Row = styled(motion.div)`
   width: 100%;
 `;
 
-const Box = styled(motion.div)<{ bgPhoto: string }>`
+const Box = styled(motion.div)<{ bgphoto: string }>`
   background-color: white;
   height: 200px;
   font-size: 26px;
-  background-image: url(${(props) => props.bgPhoto});
+  background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
   cursor: pointer;
@@ -134,7 +134,7 @@ const rowVariants = {
 };
 
 const boxVariants = {
-  normal: { scale: 1 },
+  normal: { originX: 0, scale: 1 },
   hover: {
     scale: 1.3,
     y: -50,
@@ -190,7 +190,7 @@ function Home() {
         <>
           <Banner
             onClick={increaseIndex}
-            bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}
+            bgphoto={makeImagePath(data?.results[0].backdrop_path || "")}
           >
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
@@ -215,7 +215,7 @@ function Home() {
                       initial="normal"
                       whileHover="hover"
                       transition={{ type: "tween" }}
-                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                      bgphoto={makeImagePath(movie.backdrop_path, "w500")}
                       onClick={() => {
                         onClickedBox(movie.id);
                       }}
