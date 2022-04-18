@@ -76,3 +76,15 @@ export function getTvsTopRated() {
     `${BASE_PATH}/tv/top_rated?api_key=${API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
+
+export function searchMovies(keyword: string) {
+  return fetch(
+    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&language=ko-KRpage=1&include_adult=false`
+  ).then((response) => response.json());
+}
+
+export function searchTvs(keyword: string) {
+  return fetch(
+    `${BASE_PATH}/search/tv?api_key=${API_KEY}&query=${keyword}&language=ko-KRpage=1&include_adult=false`
+  ).then((response) => response.json());
+}
