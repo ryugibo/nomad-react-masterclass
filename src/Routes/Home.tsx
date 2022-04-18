@@ -9,11 +9,13 @@ import { useQuery } from "react-query";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import {
+  getMovie,
   getMovies,
   getTopRatedMovies,
   getUpcomingMovies,
   IGetMoviesResult,
   IMovie,
+  IMovieDetail,
 } from "../api";
 import { makeImagePath } from "../utils";
 import Slider from "../Components/Slider";
@@ -92,11 +94,35 @@ const BigTitle = styled.h3`
   top: -80px;
 `;
 
+const BigHompage = styled.div`
+  font-size: 40px;
+  position: relative;
+  top: -145px;
+  text-align: right;
+`;
+
+const BigYear = styled.h3`
+  position: relative;
+  top: -80px;
+`;
+
+const BigTagContainer = styled.div`
+  position: relative;
+  top: -120px;
+  text-align: right;
+`;
+
+const BigTag = styled.span`
+  border: 1px solid white;
+  padding: 2px;
+  background-color: black;
+`;
+
 const BigOverview = styled.p`
   padding: 20px;
   color: ${(props) => props.theme.white.lighter};
   position: relative;
-  top: -80px;
+  top: -120px;
 `;
 
 function Home() {
@@ -112,7 +138,6 @@ function Home() {
     useQuery<IGetMoviesResult>(["movies", "topRated"], getTopRatedMovies);
   const { data: dataUpcoming, isLoading: isLoadingUpcoming } =
     useQuery<IGetMoviesResult>(["movied", "upcoming"], getUpcomingMovies);
-  console.log(dataTopRated);
   const onClickedBox = (movieId: number) => {
     history.push(`/movies/${movieId}`);
   };
@@ -124,7 +149,7 @@ function Home() {
   };
 
   let clickedType = "";
-  let clickedMovie = undefined;
+  let clickedMovie: IMovie | undefined = undefined;
   if (data?.results.find(findMovie)) {
     clickedMovie = data?.results.find(findMovie);
     clickedType = "latest_movies";
@@ -135,6 +160,18 @@ function Home() {
     clickedMovie = dataUpcoming?.results.find(findMovie);
     clickedType = "upcoming";
   }
+
+  const { data: clickedData, isLoading: isLoadingClickedData } =
+    useQuery<IMovieDetail>(
+      ["movies", "upcoming", clickedMovie],
+      () => {
+        if (clickedMovie !== undefined) {
+          return getMovie(clickedMovie.id);
+        }
+        return getMovie(0);
+      },
+      { enabled: clickedMovie !== undefined }
+    );
   return (
     <Wrapper>
       {isLoading ? (
@@ -174,6 +211,21 @@ function Home() {
                         }}
                       />
                       <BigTitle>{clickedMovie.title}</BigTitle>
+
+                      {!isLoadingClickedData && clickedData !== undefined && (
+                        <BigHompage>
+                          <a href={clickedData.homepage} target="_blank">
+                            🏠
+                          </a>
+                        </BigHompage>
+                      )}
+                      <BigTagContainer>
+                        {!isLoadingClickedData &&
+                          clickedData !== undefined &&
+                          clickedData.genres.map(({ id, name }) => {
+                            return <BigTag key={id}>{name}</BigTag>;
+                          })}
+                      </BigTagContainer>
                       <BigOverview>{clickedMovie.overview}</BigOverview>
                     </>
                   )}
