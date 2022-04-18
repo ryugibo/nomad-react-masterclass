@@ -30,6 +30,17 @@ export interface IGetMoviesResult {
   total_results: number;
 }
 
+export interface ITvDetail {
+  id: number;
+  genres: [
+    {
+      id: number;
+      name: string;
+    }
+  ];
+  homepage: string;
+}
+
 export interface ITv {
   id: number;
   name: string;
@@ -65,6 +76,12 @@ export function getTopRatedMovies() {
 export function getUpcomingMovies() {
   return fetch(
     `${BASE_PATH}/movie/upcoming?api_key=${API_KEY}&language=ko-KR`
+  ).then((response) => response.json());
+}
+
+export function getTv(tvId: number) {
+  return fetch(
+    `${BASE_PATH}/tv/${tvId}?api_key=${API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 

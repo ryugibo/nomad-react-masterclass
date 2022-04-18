@@ -9,12 +9,14 @@ import { useQuery } from "react-query";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import {
+  getTv,
   getTvs,
   getTvsAiringToday,
   getTvsPopular,
   getTvsTopRated,
   IGetTvsResult,
   ITv,
+  ITvDetail,
 } from "../api";
 import { makeImagePath } from "../utils";
 import Slider from "../Components/Slider";
@@ -100,6 +102,25 @@ const BigOverview = styled.p`
   top: -80px;
 `;
 
+const BigHompage = styled.div`
+  font-size: 40px;
+  position: relative;
+  top: -145px;
+  text-align: right;
+`;
+
+const BigTagContainer = styled.div`
+  position: relative;
+  top: -120px;
+  text-align: right;
+`;
+
+const BigTag = styled.span`
+  border: 1px solid white;
+  padding: 2px;
+  background-color: black;
+`;
+
 const rowVariants = {
   hidden: { x: window.outerWidth + 5 },
   visible: { x: 0 },
@@ -139,6 +160,7 @@ function Tv() {
   const { data: dataTopRated, isLoading: isLoadingTopRated } =
     useQuery<IGetTvsResult>(["tv", "top_rated"], getTvsTopRated);
 
+  console.log(data);
   const onClickedBox = (tvId: number) => {
     history.push(`/tv/${tvId}`);
   };
@@ -149,7 +171,7 @@ function Tv() {
     return tv.id + "" === bigTvMatch?.params.tvId;
   };
   let clickedType = "";
-  let clickedTv = undefined;
+  let clickedTv: ITv | undefined = undefined;
   if (data?.results.find(findTv)) {
     clickedTv = data?.results.find(findTv);
     clickedType = "latest_shows";
@@ -163,6 +185,20 @@ function Tv() {
     clickedTv = dataTopRated?.results.find(findTv);
     clickedType = "top_rated";
   }
+
+  const { data: clickedData, isLoading: isLoadingClickedData } =
+    useQuery<ITvDetail>(
+      ["tv", clickedTv],
+      () => {
+        if (clickedTv !== undefined) {
+          return getTv(clickedTv.id);
+        }
+        return getTv(0);
+      },
+      { enabled: clickedTv !== undefined }
+    );
+
+  console.log(clickedData);
   return (
     <Wrapper>
       {isLoading ? (
@@ -202,6 +238,20 @@ function Tv() {
                         }}
                       />
                       <BigTitle>{clickedTv.name}</BigTitle>
+                      {!isLoadingClickedData && clickedData !== undefined && (
+                        <BigHompage>
+                          <a href={clickedData.homepage} target="_blank">
+                            🏠
+                          </a>
+                        </BigHompage>
+                      )}
+                      <BigTagContainer>
+                        {!isLoadingClickedData &&
+                          clickedData !== undefined &&
+                          clickedData.genres.map(({ id, name }) => {
+                            return <BigTag key={id}>{name}</BigTag>;
+                          })}
+                      </BigTagContainer>
                       <BigOverview>{clickedTv.overview}</BigOverview>
                     </>
                   )}
