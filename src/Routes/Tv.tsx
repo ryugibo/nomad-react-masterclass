@@ -17,6 +17,7 @@ import {
   ITv,
 } from "../api";
 import { makeImagePath } from "../utils";
+import Slider from "../Components/Slider";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -52,49 +53,6 @@ const Title = styled.h2`
 const Overview = styled.p`
   font-size: 30px;
   width: 50vw;
-`;
-
-const Slider = styled.div<{ top: string }>`
-  position: relative;
-  top: ${(props) => props.top};
-`;
-
-const Row = styled(motion.div)`
-  display: grid;
-  gap: 5px;
-  grid-template-columns: repeat(6, 1fr);
-  position: absolute;
-  width: 100%;
-`;
-
-const Box = styled(motion.div)<{ bgphoto: string }>`
-  position: relative;
-  background-color: white;
-  height: 200px;
-  font-size: 26px;
-  background-image: url(${(props) => props.bgphoto});
-  background-size: cover;
-  background-position: center center;
-  cursor: pointer;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
-`;
-
-const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  h4 {
-    text-align: center;
-    font-size: 18px;
-  }
 `;
 
 const Overlay = styled(motion.div)`
@@ -174,7 +132,6 @@ function Tv() {
     ["tv", "on_the_air"],
     getTvs
   );
-  console.log(data);
   const { data: dataAiringToday, isLoading: isLoadingAiringToday } =
     useQuery<IGetTvsResult>(["tv", "airing_today"], getTvsAiringToday);
   const { data: dataPopular, isLoading: isLoadingPopular } =
@@ -182,82 +139,47 @@ function Tv() {
   const { data: dataTopRated, isLoading: isLoadingTopRated } =
     useQuery<IGetTvsResult>(["tv", "top_rated"], getTvsTopRated);
 
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-  const increaseIndex = () => {
-    if (data) {
-      if (leaving) return;
-      setLeaving(true);
-      const totalMovies = data?.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-  const toggleLeaving = () => setLeaving((prev) => !prev);
   const onClickedBox = (tvId: number) => {
     history.push(`/tv/${tvId}`);
   };
   const onClickedOverlay = () => {
     history.push(`/tv`);
   };
-  const findTv = (movie: ITv) => {
-    return movie.id + "" === bigTvMatch?.params.tvId;
+  const findTv = (tv: ITv) => {
+    return tv.id + "" === bigTvMatch?.params.tvId;
   };
-  const clickedMovie =
-    bigTvMatch?.params.tvId &&
-    (data?.results.find(findTv) ||
-      dataAiringToday?.results.find(findTv) ||
-      dataPopular?.results.find(findTv) ||
-      dataTopRated?.results.find(findTv));
-  console.log(clickedMovie);
+  let clickedType = "";
+  let clickedTv = undefined;
+  if (data?.results.find(findTv)) {
+    clickedTv = data?.results.find(findTv);
+    clickedType = "latest_shows";
+  } else if (dataAiringToday?.results.find(findTv)) {
+    clickedTv = dataAiringToday?.results.find(findTv);
+    clickedType = "airing_today";
+  } else if (dataPopular?.results.find(findTv)) {
+    clickedTv = dataPopular?.results.find(findTv);
+    clickedType = "popular";
+  } else if (dataTopRated?.results.find(findTv)) {
+    clickedTv = dataTopRated?.results.find(findTv);
+    clickedType = "top_rated";
+  }
   return (
     <Wrapper>
       {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner
-            onClick={increaseIndex}
-            bgphoto={makeImagePath(data?.results[0].backdrop_path || "")}
-          >
+          <Banner bgphoto={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].name}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
-          <Slider top="-100px">
-            <Title>Latest Shows</Title>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-              <Row
-                variants={rowVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                transition={{ type: "tween", duration: 1 }}
-                key={index}
-              >
-                {data?.results
-                  .slice(1)
-                  .slice(offset * index, offset * index + offset)
-                  .map((movie) => (
-                    <Box
-                      key={movie.id}
-                      variants={boxVariants}
-                      initial="normal"
-                      whileHover="hover"
-                      transition={{ type: "tween" }}
-                      bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                      onClick={() => {
-                        onClickedBox(movie.id);
-                      }}
-                      layoutId={movie.id + ""}
-                    >
-                      <Info variants={infoVariants}>
-                        <h4>{movie.name}</h4>
-                      </Info>
-                    </Box>
-                  ))}
-              </Row>
-            </AnimatePresence>
-          </Slider>
+          <Slider
+            layoutPrefix="latest_shows"
+            title="Latest Shows"
+            top="-100px"
+            datas={data ? data.results : []}
+            onClickedBox={onClickedBox}
+          />
           <AnimatePresence>
             {bigTvMatch && (
               <>
@@ -268,19 +190,19 @@ function Tv() {
                 />
                 <BigMovie
                   style={{ top: setScrollY }}
-                  layoutId={bigTvMatch.params.tvId}
+                  layoutId={clickedType + bigTvMatch.params.tvId}
                 >
-                  {clickedMovie && (
+                  {clickedTv && (
                     <>
                       <BigCover
                         style={{
                           backgroundImage: `linear-gradient(to top, black, transparent), url(
-                            ${makeImagePath(clickedMovie.backdrop_path, "w500")}
+                            ${makeImagePath(clickedTv.backdrop_path, "w500")}
                           )`,
                         }}
                       />
-                      <BigTitle>{clickedMovie.name}</BigTitle>
-                      <BigOverview>{clickedMovie.overview}</BigOverview>
+                      <BigTitle>{clickedTv.name}</BigTitle>
+                      <BigOverview>{clickedTv.overview}</BigOverview>
                     </>
                   )}
                 </BigMovie>
@@ -292,119 +214,35 @@ function Tv() {
       {isLoadingAiringToday ? (
         <Loader>Loading...</Loader>
       ) : (
-        <Slider top="200px">
-          <Title>Airing Today</Title>
-          <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            <Row
-              variants={rowVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ type: "tween", duration: 1 }}
-              key={index}
-            >
-              {dataAiringToday?.results
-                .slice(1)
-                .slice(offset * index, offset * index + offset)
-                .map((movie) => (
-                  <Box
-                    key={movie.id}
-                    variants={boxVariants}
-                    initial="normal"
-                    whileHover="hover"
-                    transition={{ type: "tween" }}
-                    bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                    onClick={() => {
-                      onClickedBox(movie.id);
-                    }}
-                    layoutId={movie.id + ""}
-                  >
-                    <Info variants={infoVariants}>
-                      <h4>{movie.name}</h4>
-                    </Info>
-                  </Box>
-                ))}
-            </Row>
-          </AnimatePresence>
-        </Slider>
+        <Slider
+          layoutPrefix="airing_today"
+          title="Airing Today"
+          top="200px"
+          datas={dataAiringToday ? dataAiringToday.results : []}
+          onClickedBox={onClickedBox}
+        />
       )}
       {isLoadingPopular ? (
         <Loader>Loading...</Loader>
       ) : (
-        <Slider top="500px">
-          <Title>Popular</Title>
-          <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            <Row
-              variants={rowVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ type: "tween", duration: 1 }}
-              key={index}
-            >
-              {dataPopular?.results
-                .slice(1)
-                .slice(offset * index, offset * index + offset)
-                .map((tv) => (
-                  <Box
-                    key={tv.id}
-                    variants={boxVariants}
-                    initial="normal"
-                    whileHover="hover"
-                    transition={{ type: "tween" }}
-                    bgphoto={makeImagePath(tv.backdrop_path, "w500")}
-                    onClick={() => {
-                      onClickedBox(tv.id);
-                    }}
-                    layoutId={tv.id + ""}
-                  >
-                    <Info variants={infoVariants}>
-                      <h4>{tv.name}</h4>
-                    </Info>
-                  </Box>
-                ))}
-            </Row>
-          </AnimatePresence>
-        </Slider>
+        <Slider
+          layoutPrefix="popular"
+          title="Popular"
+          top="500px"
+          datas={dataPopular ? dataPopular.results : []}
+          onClickedBox={onClickedBox}
+        />
       )}
       {isLoadingTopRated ? (
         <Loader>Loading...</Loader>
       ) : (
-        <Slider top="800px">
-          <Title>Top Rated</Title>
-          <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-            <Row
-              variants={rowVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              transition={{ type: "tween", duration: 1 }}
-              key={index}
-            >
-              {dataTopRated?.results
-                .slice(1)
-                .slice(offset * index, offset * index + offset)
-                .map((tv) => (
-                  <Box
-                    key={tv.id}
-                    variants={boxVariants}
-                    initial="normal"
-                    whileHover="hover"
-                    transition={{ type: "tween" }}
-                    bgphoto={makeImagePath(tv.backdrop_path, "w500")}
-                    onClick={() => {
-                      onClickedBox(tv.id);
-                    }}
-                    layoutId={tv.id + ""}
-                  >
-                    <Info variants={infoVariants}>
-                      <h4>{tv.name}</h4>
-                    </Info>
-                  </Box>
-                ))}
-            </Row>
-          </AnimatePresence>
-        </Slider>
+        <Slider
+          layoutPrefix="top_rated"
+          title="Top Rated"
+          top="800px"
+          datas={dataTopRated ? dataTopRated.results : []}
+          onClickedBox={onClickedBox}
+        />
       )}
     </Wrapper>
   );
