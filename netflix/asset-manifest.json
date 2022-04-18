@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/nomad-react-masterclass/netflix/static/js/main.17c1152a.js",
+    "main.js": "/nomad-react-masterclass/netflix/static/js/main.4bbc1e7c.js",
     "index.html": "/nomad-react-masterclass/netflix/index.html",
-    "main.17c1152a.js.map": "/nomad-react-masterclass/netflix/static/js/main.17c1152a.js.map"
+    "main.4bbc1e7c.js.map": "/nomad-react-masterclass/netflix/static/js/main.4bbc1e7c.js.map"
   },
   "entrypoints": [
-    "static/js/main.17c1152a.js"
+    "static/js/main.4bbc1e7c.js"
   ]
 }
