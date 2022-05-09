@@ -160,7 +160,6 @@ function Tv() {
   const { data: dataTopRated, isLoading: isLoadingTopRated } =
     useQuery<IGetTvsResult>(["tv", "top_rated"], getTvsTopRated);
 
-  console.log(data);
   const onClickedBox = (tvId: number) => {
     history.push(`/tv/${tvId}`);
   };
@@ -198,7 +197,6 @@ function Tv() {
       { enabled: clickedTv !== undefined }
     );
 
-  console.log(clickedData);
   return (
     <Wrapper>
       {isLoading ? (

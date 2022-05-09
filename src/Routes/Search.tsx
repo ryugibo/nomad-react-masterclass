@@ -35,8 +35,6 @@ function Search() {
     ["search", "tv", keyword],
     () => searchTvs(keyword)
   );
-  console.log(dataMovies);
-  console.log(dataTvs);
 
   // Search
   return (

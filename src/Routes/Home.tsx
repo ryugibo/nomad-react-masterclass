@@ -126,6 +126,7 @@ const BigOverview = styled.p`
 `;
 
 function Home() {
+  const [displayIdList, setDisplayIdList] = useState<number[]>([]);
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
   const { scrollY } = useViewportScroll();
