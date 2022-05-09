@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/nomad-react-masterclass/trello/static/js/main.6f25c7b2.js",
+    "index.html": "/nomad-react-masterclass/trello/index.html",
+    "main.6f25c7b2.js.map": "/nomad-react-masterclass/trello/static/js/main.6f25c7b2.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.6f25c7b2.js"
+  ]
+}
