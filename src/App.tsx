@@ -6,19 +6,18 @@ import Board from "./Components/Board";
 
 const Wrapper = styled.div`
   display: flex;
-  max-width: 680px;
-  width: 100%;
-  margin: 0 auto;
+  width: 100vw;
   justify-content: center;
   align-items: center;
   height: 100vh;
 `;
 
 const Boards = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   width: 100%;
+  gap: 10px;
 `;
 
 function App() {
@@ -26,6 +25,18 @@ function App() {
   const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
     if (!destination) {
       return;
+    }
+    if (destination.droppableId === source.droppableId) {
+      // Same board
+      setToDos((allBoards) => {
+        const boardCopy = [...allBoards[source.droppableId]];
+        boardCopy.splice(source.index, 1);
+        boardCopy.splice(destination.index, 0, draggableId);
+        return {
+          ...allBoards,
+          [source.droppableId]: boardCopy,
+        };
+      });
     }
     // setToDos((oldToDos) => {
     //   const copyToDos = [...oldToDos];
