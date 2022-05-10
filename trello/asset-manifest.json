@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/nomad-react-masterclass/trello/static/js/main.6f25c7b2.js",
+    "main.js": "/nomad-react-masterclass/trello/static/js/main.643fcc6d.js",
     "index.html": "/nomad-react-masterclass/trello/index.html",
-    "main.6f25c7b2.js.map": "/nomad-react-masterclass/trello/static/js/main.6f25c7b2.js.map"
+    "main.643fcc6d.js.map": "/nomad-react-masterclass/trello/static/js/main.643fcc6d.js.map"
   },
   "entrypoints": [
-    "static/js/main.6f25c7b2.js"
+    "static/js/main.643fcc6d.js"
   ]
 }
