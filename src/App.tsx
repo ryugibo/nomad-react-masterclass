@@ -37,13 +37,20 @@ function App() {
           [source.droppableId]: boardCopy,
         };
       });
+    } else {
+      // Cross board
+      setToDos((allBoards) => {
+        const sourceBoard = [...allBoards[source.droppableId]];
+        const destinationBoard = [...allBoards[destination.droppableId]];
+        sourceBoard.splice(source.index, 1);
+        destinationBoard.splice(destination.index, 0, draggableId);
+        return {
+          ...allBoards,
+          [source.droppableId]: sourceBoard,
+          [destination.droppableId]: destinationBoard,
+        };
+      });
     }
-    // setToDos((oldToDos) => {
-    //   const copyToDos = [...oldToDos];
-    //   copyToDos.splice(source.index, 1);
-    //   copyToDos.splice(destination.index, 0, draggableId);
-    //   return copyToDos;
-    // });
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
